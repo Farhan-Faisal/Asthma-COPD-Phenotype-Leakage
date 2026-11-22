@@ -15,7 +15,7 @@ authors:
     given-names: Kamruddin
     affiliation: American International University-Bangladesh
 repository-code: "https://github.com/Farhan-Faisal/Asthma-COPD-Phenotype-Leakage"
-license: MIT
+license-url: "https://github.com/Farhan-Faisal/Asthma-COPD-Phenotype-Leakage/blob/main/LICENSE"
 preferred-citation:
   type: conference-paper
   title: "Quantifying Phenotype-Definition Leakage in Asthma-COPD Classification Using NHANES Data"

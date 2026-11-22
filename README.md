@@ -15,35 +15,58 @@ This repository contains the full analysis pipeline for a four-arm ablation stud
 | Feature | What it means |
 |---|---|
 | **Four-arm ablation** | A: full set (25 features); B: ratio removed (24); C: all spirometry removed (21); D: spirometry and race removed (20). |
-| **Shared outer folds** | All four arms see byte-identical splits, so arm-to-arm differences are paired within folds rather than confounded by split variance. |
+| **Shared outer folds** | All four arms see identical splits, so arm-to-arm differences are paired within folds rather than confounded by split variance. |
 | **Nested repeated CV** | Stratified 5-fold x 10 repeats. Hyperparameters tuned on 75% of each outer training set, decision threshold selected on the remaining 25%, never on test. |
 | **Fold-internal preprocessing** | Imputation, encoding, and scaling are fitted on training folds only. |
 | **Label-constructing variables excluded** | The four questionnaire items defining the phenotypes are dropped from the predictor set. |
-| **Survey-weighted descriptives** | Six-year MEC weights with Taylor linearization over SDMVPSU and SDMVSTRA for population estimates; predictive models fitted unweighted. |
+| **Survey-weighted descriptives** | Six-year MEC weights with Taylor linearization over `SDMVPSU` and `SDMVSTRA` for population estimates; predictive models fitted unweighted. |
 | **Missingness sensitivity** | Complete-spirometry (n = 649) and complete-FeNO (n = 666) reruns test whether differential missingness inflates performance and feature importance. |
 
 ---
 
 ## Analysis protocol
 
-<!-- Replace the placeholder path below with the workflow figure from the paper.
-     Either commit the image to results/ and reference it, or paste a GitHub
-     attachment URL as in the example comment at the end of this block. -->
+<!-- TODO: export the workflow figure from the paper to results/workflow.png
+     and commit it. Until then this image will render as a broken link. -->
 
 <p align="center">
-     <img width="3814" height="1661" alt="Analysis workflow: cohort construction, four-arm feature ablation, nested cross-validation, paired ablation analysis, and SHAP interpretability" src="https://github.com/user-attachments/assets/24bfaa59-453d-4136-ae10-dd66acdfd432" />
+  <img src="results/workflow.png" alt="Analysis workflow: cohort construction, four-arm feature ablation, nested cross-validation, paired ablation analysis, and SHAP interpretability" width="100%">
   <br>
   <em>Analysis workflow. Cohort construction and feature ablation feed a nested cross-validation protocol in which hyperparameters and the decision threshold are selected inside each training fold. The four arms share outer splits, so ablation effects are estimated pairwise within folds.</em>
 </p>
+
 ---
 
 ## Repository layout
 
 ```
-src/        Analysis notebooks (run in numbered order)
-data/       NHANES .xpt files, by survey cycle (not tracked - see below)
-results/    Figures and exported tables
+src/        Analysis notebooks (run in numbered order) and the ablation figure
+data/raw/   NHANES .xpt source files, by survey cycle
+data/proc/  Derived analytic cohort and survey frame
+results/    Exported tables (CSV/JSON) and SHAP figures
+archive/    Superseded notebook and earlier figure drafts
 ```
+
+### `src/`
+
+| Notebook | Purpose |
+|---|---|
+| `1-cohort-construction.ipynb` | Merges the nine NHANES components across three cycles, applies the phenotype definitions, excludes overlap cases, writes `data/proc/`. |
+| `2-modelling-and-shap.ipynb` | Four-arm ablation under nested repeated CV, paired arm deltas, SHAP, sensitivity analyses. |
+| `3-summarize.ipynb` | Builds the exported tables and figures in `results/`. |
+
+Run them in numbered order; later notebooks read the artifacts the earlier ones write.
+`4-rough.ipynb` is scratch work and is not part of the pipeline.
+
+### `results/`
+
+Nested-CV fold-level metrics per arm (`nested_cv_folds_*.csv`), the four-arm
+ablation summary (`ablation_four_arm.csv`), paired arm deltas
+(`paired_arm_deltas.csv`), the XGBoost metric breakdown
+(`metrics_by_arm_xgboost.csv`), survey-weighted Table 1 and prevalence
+(`table1_weighted.csv`, `weighted_prevalence.csv`), the two sensitivity analyses
+(`imputation_sensitivity.csv`, `shap_feno_sensitivity.csv`), and the SHAP
+importance exports and figures.
 
 ---
 
@@ -69,26 +92,26 @@ Nine components are pulled from each cycle:
 | `SPX`  | Spirometry |
 
 Cycle suffixes are `_E` (2007-2008), `_F` (2009-2010), and `_G` (2011-2012) — for
-example, `DEMO_E.XPT`.
+example, `DEMO_E.xpt`.
 
-### Getting the data
+### Source files
 
-The `.xpt` files are **not included in this repository**. They are U.S. federal
-public-domain works and are redistributed by NCHS, not by us. Download them from the
-CDC and place them in the matching cycle folder:
+The `.xpt` files are **included in this repository** (about 66 MB) so the pipeline runs
+without a separate download. They are U.S. federal public-domain works produced by the
+National Center for Health Statistics and are redistributed here unmodified:
 
 ```
-Dataset/
-├── 2007_2008/   DEMO_E.XPT, BMX_E.XPT, CBC_E.XPT, ...
-├── 2009_2010/   DEMO_F.XPT, BMX_F.XPT, CBC_F.XPT, ...
-└── 2011_2012/   DEMO_G.XPT, BMX_G.XPT, CBC_G.XPT, ...
+data/raw/
+├── 2007_2008/   BMX_E.xpt, CBC_E.xpt, DEMO_E.xpt, ENX_E.xpt, MCQ_E.xpt,
+│                OCQ_E.xpt, RDQ_E.xpt, SMQ_E.xpt, SPX_E.xpt
+├── 2009_2010/   ... _F.xpt
+└── 2011_2012/   ... _G.xpt
 ```
 
-Download page: https://wwwn.cdc.gov/nchs/nhanes/
-
-The loader walks `Dataset/` recursively and matches on filename, so subfolder naming
-is flexible — but all 27 files (9 components x 3 cycles) must be present or the
-notebook raises `FileNotFoundError` listing what is missing.
+All 27 files (9 components x 3 cycles) must be present or the first notebook raises
+`FileNotFoundError` listing what is missing. The authoritative source, should you want
+to verify the copies here, is the CDC download page:
+https://wwwn.cdc.gov/nchs/nhanes/
 
 ### Citing the data
 
@@ -110,10 +133,10 @@ descriptive work.
 Requires [conda](https://docs.conda.io/) (or mamba/micromamba).
 
 ```bash
-git clone https://github.com/[ORG]/asthma-copd-v2.git
-cd asthma-copd-v2
+git clone https://github.com/Farhan-Faisal/Asthma-COPD-Phenotype-Leakage.git
+cd Asthma-COPD-Phenotype-Leakage
 
-conda env create -f environment.yml
+conda env create -f env.yml
 conda activate asthma-copd
 ```
 
@@ -123,8 +146,8 @@ Then launch the notebooks:
 jupyter lab
 ```
 
-Run the notebooks in `Code/` in numbered order. The first builds the analytic cohort;
-later ones depend on objects it defines.
+Run the notebooks in `src/` in numbered order. The first builds the analytic cohort;
+later ones depend on the files it writes to `data/proc/`.
 
 To record exactly what you ran, export a lock file:
 
@@ -158,8 +181,8 @@ A few things that make review faster:
 - Keep one logical change per pull request.
 - If a change affects reported numbers, say which table or figure moves and by how
   much.
-- Do not commit `.xpt` data files or regenerated CSV/PNG outputs — `.gitignore`
-  covers these.
+- Do not commit regenerated CSV or PNG outputs unless the change is meant to move
+  them.
 - Open an issue first for anything large, so we can agree on the approach before you
   spend time on it.
 
@@ -200,16 +223,18 @@ a formatted citation from the "Cite this repository" button on the repository pa
 | **Nahian Islam Rishad** (American International University-Bangladesh) | Ideation, code, writing |
 | **Mst. Fabiha Afifa** (American International University-Bangladesh) | Ideation, code, writing |
 | **Farhan Bin Faisal** (American International University-Bangladesh) | Ideation, code, writing |
-| **Kamruddin Nur** (American International University-Bangladesh) | Proofreading |
+| **Kamruddin Nur** (American International University-Bangladesh) | Ideation, code, writing |
 
 ---
 
 ## License
 
-The code in this repository is licensed under the license in the [LICENSE](LICENSE)
-file — you are free to use and modify it.
+The code in this repository is released under the **Research Use and Attribution
+License** in the [LICENSE](LICENSE) file. In short: free to use, modify, and
+distribute for academic, educational, and non-commercial research, with attribution
+and citation required. Commercial use requires separate written permission.
 
 **The data is not covered by this license.** NHANES data files are U.S. federal
-public-domain works distributed by the National Center for Health Statistics. Please
-refer to the NCHS terms of use and analytic guidelines before redistributing or
-reusing them: <https://wwwn.cdc.gov/nchs/nhanes/>.
+public-domain works distributed by the National Center for Health Statistics. See the
+NCHS terms of use and analytic guidelines before redistributing or reusing them:
+<https://wwwn.cdc.gov/nchs/nhanes/>.

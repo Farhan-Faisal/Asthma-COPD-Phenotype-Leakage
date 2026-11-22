@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "Asthma-COPD-Phenotype-Leakage"
+authors:
+  - family-names: Rishad
+    given-names: Nahian Islam
+    affiliation: American International University-Bangladesh
+  - family-names: Afifa
+    given-names: Mst. Fabiha
+    affiliation: American International University-Bangladesh
+  - family-names: Faisal
+    given-names: Farhan Bin
+    affiliation: American International University-Bangladesh
+  - family-names: Nur
+    given-names: Kamruddin
+    affiliation: American International University-Bangladesh
+repository-code: "https://github.com/Farhan-Faisal/Asthma-COPD-Phenotype-Leakage"
+license: MIT
+preferred-citation:
+  type: conference-paper
+  title: "Quantifying Phenotype-Definition Leakage in Asthma-COPD Classification Using NHANES Data"
+  authors:
+    - family-names: Rishad
+      given-names: Nahian Islam
+    - family-names: Afifa
+      given-names: Mst. Fabiha
+    - family-names: Faisal
+      given-names: Farhan Bin
+    - family-names: Nur
+      given-names: Kamruddin
+  collection-title: "Proceedings of the 13th International Conference on Next Generation Computing, Communication, Systems and Security (NSysS '26)"
+  conference:
+    name: "NSysS '26"
+    city: "Cox's Bazar"
+    country: BD
+  year: 2026
+  month: 12
+  publisher:
+    name: ACM

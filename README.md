@@ -31,14 +31,10 @@ This repository contains the full analysis pipeline for a four-arm ablation stud
      attachment URL as in the example comment at the end of this block. -->
 
 <p align="center">
-  <img src="results/workflow.png" alt="Analysis workflow: cohort construction, four-arm feature ablation, nested cross-validation, paired ablation analysis, and SHAP interpretability" width="100%">
+     <img width="3814" height="1661" alt="Analysis workflow: cohort construction, four-arm feature ablation, nested cross-validation, paired ablation analysis, and SHAP interpretability" src="https://github.com/user-attachments/assets/24bfaa59-453d-4136-ae10-dd66acdfd432" />
   <br>
   <em>Analysis workflow. Cohort construction and feature ablation feed a nested cross-validation protocol in which hyperparameters and the decision threshold are selected inside each training fold. The four arms share outer splits, so ablation effects are estimated pairwise within folds.</em>
 </p>
-
-<!-- Alternative, if hosting via GitHub attachment:
-     <img src="https://github.com/user-attachments/assets/XXXXXXXX" ... >  -->
-
 ---
 
 ## Repository layout

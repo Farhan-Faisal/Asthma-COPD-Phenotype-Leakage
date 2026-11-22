@@ -200,7 +200,7 @@ a formatted citation from the "Cite this repository" button on the repository pa
 | **Nahian Islam Rishad** (American International University-Bangladesh) | Ideation, code, writing |
 | **Mst. Fabiha Afifa** (American International University-Bangladesh) | Ideation, code, writing |
 | **Farhan Bin Faisal** (American International University-Bangladesh) | Ideation, code, writing |
-| **Kamruddin Nur** (American International University-Bangladesh) | Ideation, code, writing |
+| **Kamruddin Nur** (American International University-Bangladesh) | Proofreading |
 
 ---
 
